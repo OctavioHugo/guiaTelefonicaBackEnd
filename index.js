@@ -1,13 +1,15 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-require('dotenv').config()
 const Person = require('./models/person')
-
 const app = express()
 
 app.use(cors())
 app.use(express.static('build'))
+
+
+
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -35,7 +37,7 @@ app.use(morgan((tokens, request, response) => [
 app.use(requestLogger)
 
 
-let persons =  [
+/* let persons =  [
       { 
         "name": "Arto Hellas", 
         "number": "040-123456",
@@ -56,7 +58,7 @@ let persons =  [
         "number": "39-23-6423122",
         "id": 4
       }
-    ]
+    ] */
   
 const generateId = () => (
   persons.length > 0
@@ -69,7 +71,9 @@ app.get('/', (request, response) => {
     })
     
 app.get('/api/persons', (request, response) => {
-response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
